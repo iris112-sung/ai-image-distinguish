@@ -1,0 +1,117 @@
+{
+  "class_names": [
+    "AiArtData",
+    "RealArt"
+  ],
+  "scan_stats": {
+    "found_classes": 2,
+    "kept_images": 973,
+    "skipped_exact_duplicates": 1,
+    "skipped_unreadable": 0
+  },
+  "split_counts": {
+    "train": 681,
+    "val": 146,
+    "test": 146
+  },
+  "best_epoch": 2,
+  "best_val_accuracy": 0.6643835616438356,
+  "test_loss": 0.6269447640196918,
+  "test_accuracy": 0.6643835616438356,
+  "classification_report": {
+    "AiArtData": {
+      "precision": 0.6509433962264151,
+      "recall": 0.8518518518518519,
+      "f1-score": 0.7379679144385026,
+      "support": 81.0
+    },
+    "RealArt": {
+      "precision": 0.7,
+      "recall": 0.4307692307692308,
+      "f1-score": 0.5333333333333333,
+      "support": 65.0
+    },
+    "accuracy": 0.6643835616438356,
+    "macro avg": {
+      "precision": 0.6754716981132075,
+      "recall": 0.6413105413105413,
+      "f1-score": 0.635650623885918,
+      "support": 146.0
+    },
+    "weighted avg": {
+      "precision": 0.6727836650297234,
+      "recall": 0.6643835616438356,
+      "f1-score": 0.6468634776451053,
+      "support": 146.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      69,
+      12
+    ],
+    [
+      37,
+      28
+    ]
+  ],
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.671776,
+      "train_accuracy": 0.590308,
+      "val_loss": 0.672398,
+      "val_accuracy": 0.582192
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.641502,
+      "train_accuracy": 0.64464,
+      "val_loss": 0.624363,
+      "val_accuracy": 0.664384
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.643844,
+      "train_accuracy": 0.609398,
+      "val_loss": 0.647284,
+      "val_accuracy": 0.609589
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.633956,
+      "train_accuracy": 0.643172,
+      "val_loss": 0.647334,
+      "val_accuracy": 0.650685
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.60369,
+      "train_accuracy": 0.654919,
+      "val_loss": 0.664448,
+      "val_accuracy": 0.616438
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.605398,
+      "train_accuracy": 0.678414,
+      "val_loss": 0.639796,
+      "val_accuracy": 0.643836
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.587272,
+      "train_accuracy": 0.687225,
+      "val_loss": 0.660159,
+      "val_accuracy": 0.636986
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.580851,
+      "train_accuracy": 0.697504,
+      "val_loss": 0.679798,
+      "val_accuracy": 0.60274
+    }
+  ],
+  "model_path": "/Users/yunsung5387/Documents/ai image distinguish/models/cnn_ai_real/best_cnn_ai_real.pt"
+}

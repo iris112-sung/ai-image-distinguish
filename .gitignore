@@ -1,0 +1,15 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Local raw data and generated visual galleries
+ai images/
+gallery_output/
+analysis_output/
+
+# Matplotlib cache created during training
+models/**/mplconfig/
+

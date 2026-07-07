@@ -2,6 +2,12 @@
 
 CNN-based image classifier for distinguishing `AiArtData` images from `RealArt` images.
 
+## Live Demo
+
+Upload an image and get the model's AI probability:
+
+https://web-three-eta-33.vercel.app
+
 ## Dataset Layout
 
 Place the image dataset in this structure:

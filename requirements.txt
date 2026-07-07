@@ -4,4 +4,5 @@ pillow
 scikit-learn
 numpy
 matplotlib
-
+onnx
+onnxscript

@@ -1,0 +1,26 @@
+{
+  "class_names": [
+    "FAKE",
+    "REAL"
+  ],
+  "image_size": 128,
+  "input_name": "image",
+  "output_name": "logits",
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "ai_class_names": [
+    "FAKE",
+    "AiArtData"
+  ],
+  "source_checkpoint": "/Users/yunsung5387/Documents/ai image distinguish/models/cnn_archive_fast/best_cnn_ai_real.pt"
+}

@@ -49,6 +49,48 @@ Best validation accuracy: 66.44%
 Test accuracy: 66.44%
 ```
 
+## Train From Archive Dataset
+
+For an archive dataset with this structure:
+
+```text
+archive/
+  train/
+    FAKE/
+    REAL/
+  test/
+    FAKE/
+    REAL/
+```
+
+use:
+
+```bash
+python3 train_cnn_classifier.py \
+  --data-dir data/archive \
+  --train-dir data/archive/train \
+  --test-dir data/archive/test \
+  --output-dir models/cnn_archive_fast \
+  --epochs 6 \
+  --batch-size 64 \
+  --image-size 128 \
+  --max-per-class 2000 \
+  --keep-duplicates \
+  --skip-verify \
+  --device cpu
+```
+
+The archive-based run produced:
+
+```text
+Classes: FAKE, REAL
+Train / Val / Test: 3396 / 600 / 4000
+Best validation accuracy: 87.33%
+Test accuracy: 85.30%
+FAKE f1: 86.35%
+REAL f1: 84.07%
+```
+
 ## Predict
 
 Single image:
@@ -70,4 +112,5 @@ visualize_ai_images.py       Build image gallery pages.
 train_cnn_classifier.py      Train the CNN model.
 predict_ai_real.py           Run inference with the trained model.
 models/cnn_ai_real/          Saved baseline model and metrics.
+models/cnn_archive_fast/     Saved archive-based model and metrics.
 ```

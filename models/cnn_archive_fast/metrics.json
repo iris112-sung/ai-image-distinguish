@@ -1,0 +1,106 @@
+{
+  "class_names": [
+    "FAKE",
+    "REAL"
+  ],
+  "scan_stats": {
+    "found_classes": 2,
+    "kept_images": 4000,
+    "skipped_exact_duplicates": 0,
+    "skipped_unreadable": 0,
+    "test_kept_images": 4000,
+    "test_skipped_exact_duplicates": 0,
+    "test_skipped_unreadable": 0
+  },
+  "split_counts": {
+    "train": 3396,
+    "val": 600,
+    "test": 4000
+  },
+  "best_epoch": 6,
+  "best_val_accuracy": 0.8733333333333333,
+  "test_loss": 0.33827082824707033,
+  "test_accuracy": 0.853,
+  "classification_report": {
+    "FAKE": {
+      "precision": 0.8058925476603119,
+      "recall": 0.93,
+      "f1-score": 0.8635097493036211,
+      "support": 2000.0
+    },
+    "REAL": {
+      "precision": 0.91725768321513,
+      "recall": 0.776,
+      "f1-score": 0.8407367280606717,
+      "support": 2000.0
+    },
+    "accuracy": 0.853,
+    "macro avg": {
+      "precision": 0.8615751154377209,
+      "recall": 0.853,
+      "f1-score": 0.8521232386821465,
+      "support": 4000.0
+    },
+    "weighted avg": {
+      "precision": 0.861575115437721,
+      "recall": 0.853,
+      "f1-score": 0.8521232386821463,
+      "support": 4000.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      1860,
+      140
+    ],
+    [
+      448,
+      1552
+    ]
+  ],
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.607106,
+      "train_accuracy": 0.662839,
+      "val_loss": 0.556647,
+      "val_accuracy": 0.721667
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.535553,
+      "train_accuracy": 0.73616,
+      "val_loss": 0.513554,
+      "val_accuracy": 0.76
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.511819,
+      "train_accuracy": 0.747644,
+      "val_loss": 0.478322,
+      "val_accuracy": 0.776667
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.486266,
+      "train_accuracy": 0.767962,
+      "val_loss": 0.440397,
+      "val_accuracy": 0.795
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.433631,
+      "train_accuracy": 0.803004,
+      "val_loss": 0.397105,
+      "val_accuracy": 0.803333
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.409918,
+      "train_accuracy": 0.809776,
+      "val_loss": 0.301354,
+      "val_accuracy": 0.873333
+    }
+  ],
+  "model_path": "/Users/yunsung5387/Documents/ai image distinguish/models/cnn_archive_fast/best_cnn_ai_real.pt"
+}

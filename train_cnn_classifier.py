@@ -56,9 +56,19 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def scan_samples(data_dir: Path, keep_duplicates: bool) -> Tuple[List[Tuple[Path, int]], List[str], Dict[str, int]]:
-    label_dirs = sorted([p for p in data_dir.iterdir() if p.is_dir()])
-    class_names = [p.name for p in label_dirs]
+def scan_samples(
+    data_dir: Path,
+    keep_duplicates: bool,
+    max_per_class: int = 0,
+    class_names: Sequence[str] | None = None,
+    verify_images: bool = True,
+) -> Tuple[List[Tuple[Path, int]], List[str], Dict[str, int]]:
+    if class_names is None:
+        label_dirs = sorted([p for p in data_dir.iterdir() if p.is_dir()])
+        class_names = [p.name for p in label_dirs]
+    else:
+        label_dirs = [data_dir / name for name in class_names]
+    class_names = list(class_names)
     class_to_idx = {name: i for i, name in enumerate(class_names)}
     samples: List[Tuple[Path, int]] = []
     seen_hashes: Dict[str, Path] = {}
@@ -66,21 +76,31 @@ def scan_samples(data_dir: Path, keep_duplicates: bool) -> Tuple[List[Tuple[Path
     skipped_unreadable = 0
 
     for label_dir in label_dirs:
+        if not label_dir.exists():
+            raise ValueError(f"Class folder not found: {label_dir}")
         label = class_to_idx[label_dir.name]
+        class_paths: List[Path] = []
         for path in sorted(label_dir.rglob("*")):
             if not path.is_file() or path.suffix.lower() not in IMAGE_EXTS:
                 continue
-            try:
-                with Image.open(path) as img:
-                    img.verify()
-            except Exception:
-                skipped_unreadable += 1
-                continue
-            digest = sha256_file(path)
-            if not keep_duplicates and digest in seen_hashes:
-                skipped_duplicates += 1
-                continue
-            seen_hashes[digest] = path
+            class_paths.append(path)
+        if max_per_class and max_per_class > 0:
+            random.shuffle(class_paths)
+            class_paths = class_paths[:max_per_class]
+        for path in class_paths:
+            if verify_images:
+                try:
+                    with Image.open(path) as img:
+                        img.verify()
+                except Exception:
+                    skipped_unreadable += 1
+                    continue
+            if not keep_duplicates:
+                digest = sha256_file(path)
+                if digest in seen_hashes:
+                    skipped_duplicates += 1
+                    continue
+                seen_hashes[digest] = path
             samples.append((path, label))
 
     stats = {
@@ -272,10 +292,14 @@ def main() -> None:
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--val-size", type=float, default=0.15)
     parser.add_argument("--test-size", type=float, default=0.15)
+    parser.add_argument("--train-dir", default="", help="Optional explicit train folder with class subfolders")
+    parser.add_argument("--test-dir", default="", help="Optional explicit test folder with class subfolders")
+    parser.add_argument("--max-per-class", type=int, default=0, help="Limit images per class in each scanned folder")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--num-workers", type=int, default=0)
     parser.add_argument("--device", default="auto", help="auto, cpu, cuda, or mps")
     parser.add_argument("--keep-duplicates", action="store_true")
+    parser.add_argument("--skip-verify", action="store_true", help="Skip PIL image verification during scanning")
     args = parser.parse_args()
 
     seed_everything(args.seed)
@@ -283,15 +307,36 @@ def main() -> None:
     output_dir = Path(args.output_dir).expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    samples, class_names, scan_stats = scan_samples(data_dir, keep_duplicates=args.keep_duplicates)
+    scan_root = Path(args.train_dir).expanduser().resolve() if args.train_dir else data_dir
+    samples, class_names, scan_stats = scan_samples(
+        scan_root,
+        keep_duplicates=args.keep_duplicates,
+        max_per_class=args.max_per_class,
+        verify_images=not args.skip_verify,
+    )
     if len(class_names) != 2:
         raise ValueError(f"Expected exactly 2 class folders, found {class_names}")
     if len(samples) < 20:
         raise ValueError(f"Not enough images to train: {len(samples)}")
 
-    train_samples, val_samples, test_samples = split_samples(
-        samples, val_size=args.val_size, test_size=args.test_size, seed=args.seed
-    )
+    if args.test_dir:
+        train_samples, val_samples, _unused = split_samples(
+            samples, val_size=args.val_size, test_size=0.001, seed=args.seed
+        )
+        test_samples, _, test_scan_stats = scan_samples(
+            Path(args.test_dir).expanduser().resolve(),
+            keep_duplicates=args.keep_duplicates,
+            max_per_class=args.max_per_class,
+            class_names=class_names,
+            verify_images=not args.skip_verify,
+        )
+        scan_stats["test_kept_images"] = test_scan_stats["kept_images"]
+        scan_stats["test_skipped_exact_duplicates"] = test_scan_stats["skipped_exact_duplicates"]
+        scan_stats["test_skipped_unreadable"] = test_scan_stats["skipped_unreadable"]
+    else:
+        train_samples, val_samples, test_samples = split_samples(
+            samples, val_size=args.val_size, test_size=args.test_size, seed=args.seed
+        )
     write_split_csv(
         output_dir / "splits.csv",
         {"train": train_samples, "val": val_samples, "test": test_samples},
@@ -310,6 +355,10 @@ def main() -> None:
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", patience=2, factor=0.5)
 
     print(f"Data: {data_dir}")
+    if args.train_dir:
+        print(f"Train dir: {Path(args.train_dir).expanduser().resolve()}")
+    if args.test_dir:
+        print(f"Test dir: {Path(args.test_dir).expanduser().resolve()}")
     print(f"Classes: {class_names}")
     print(f"Images kept: {scan_stats['kept_images']} | duplicate skips: {scan_stats['skipped_exact_duplicates']}")
     print(f"Split: train={len(train_samples)}, val={len(val_samples)}, test={len(test_samples)}")

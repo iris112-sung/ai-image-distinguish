@@ -7,9 +7,9 @@ env/
 
 # Local raw data and generated visual galleries
 ai images/
+data/
 gallery_output/
 analysis_output/
 
 # Matplotlib cache created during training
 models/**/mplconfig/
-
